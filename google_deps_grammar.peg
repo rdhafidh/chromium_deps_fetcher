@@ -1,0 +1,46 @@
+json <- KOMENTAR? array (ESC? array)* ESC? / KOMENTAR? object ESC?
+object <- '{' ESC? pair  ESC? '}' /   '{' ESC?  '}'  
+pair <-  STRING ESC? ':' ESC? value ESC? KOMMA ( PAIRMANYCONFIG )*  
+		/ STRING ESC? ':' ESC? value  
+		
+array <- '[' ESC? value ESC? (',' ESC? value)* ESC? ']' / '[' ESC? ']'
+ 
+value <-   STRING /   NUMBER /   object  /   array   /  TRUE   /   FALSE /   NULL
+		
+STRING <- PETIK ESC* TEXTDATA* ESC* PETIK 
+TEXTDATA    <- (!["] .)
+~ESC <-   [ \n\r\t]+ 
+PETIK <- '"'
+
+PAIRMANYCONFIG <- ESC? STRING ESC? ':' ESC? value ESC? KOMMA
+			/ ESC? KOMENINPAIR ESC?
+KOMENINPAIR <- PAGER SPACEKOMEN* TEXTKOMENDOUBLESLASH* 
+
+PAGER <- '#' 
+KOMENTAR <- KOMENOPENCLOSE  NLKOMEN* KOMENDOUBLESLASH*
+KOMENOPENCLOSE <- KOMENOPEN  NLKOMEN* SPACEKOMEN* TEXTKOMEN* NLKOMEN* SPACEKOMEN* KOMENCLOSE
+KOMENDOUBLESLASH <- '/' '/' SPACEKOMEN* TEXTKOMENDOUBLESLASH* ESC*
+KOMENOPEN <- '/' '*' 
+KOMENCLOSE <- '*' '/' 
+NLKOMEN <- [\n]+
+SPACEKOMEN <- [ ]+
+TEXTKOMEN <- (!KOMENCLOSE .)
+TEXTKOMENDOUBLESLASH <- (![\n] .)
+
+KOMMA <- ','
+TRUE <- [tT] [Rr] [Uu] [eE]
+FALSE <- [fF] [Aa] [Ll] [Ss] [Ee]
+NULL <- [Nn] [Uu] [Ll] [Ll]
+NUMBER <-   '-'? INT '.' [0-9]+ EXP? # // 1.35, 1.35E-9, 0.3, -4.5
+    /   '-'? INT EXP             #  1e10 -3e4
+    /   '-'? INT                 # -3, 45
+INT <-   '0' / [1-9] [0-9]*  
+EXP <-   [Ee] ('+' / '-')? INT  
+INTBASE <- [0-9]
+STRBASE <- [a-zA-Z]
+STRMODIF <- INTBASE
+			/ STRBASE
+VARX <- STRMODIF+ 
+VALUEPY <- TRUE / FALSE / NULL 
+		/ 
+VARY <- VALUEPY
