@@ -2,21 +2,24 @@ json <- SPACEKOMEN* object ESC? ( object ESC?)*
 object <- '{' ESC? pair  ESC? '}'  
 		/ PYSTATES 
 		
-pair <- STRING ESC? ':' ESC? value ESC? KOMMA ( PAIRMANYCONFIG )*  
+pair <- REPONAME ESC? ':' ESC? REPODIR ESC? KOMMA ( PAIRMANYCONFIG )*  
 		/ STRING ESC? ':' ESC? value  
 		
 array <- '[' ESC? value ESC? (',' ESC? value)* ESC? ']' / '[' ESC? ']'
  
 value <-   STRING /   NUMBER /   object  /   array   /  TRUE   /   FALSE /   NULL 
-		
+
+PAIRMANYCONFIG <- ESC? REPONAME ESC? ':' ESC? REPODIR ESC? KOMMA
+			/ ESC? KOMENINPAIR ESC?
+                        
+REPONAME <- PETIK ESC* TEXTDATA* ESC* PETIK 
+REPODIR <- PETIK ESC* TEXTDATA* ESC* PETIK 
 STRING <- PETIK ESC* TEXTDATA* ESC* PETIK 
 TEXTDATA    <- (!["] .)
 ~ESC <-   [ \n\r\t]+ 
-PETIK <- '"'
+~PETIK <- '"'
 TEXTKOMENDOUBLESLASH <- (![\n] .)
-SPACEKOMEN <- [ ]+
-PAIRMANYCONFIG <- ESC? STRING ESC? ':' ESC? value ESC? KOMMA
-			/ ESC? KOMENINPAIR ESC?
+~SPACEKOMEN <- [ ]+
 KOMENINPAIR <- PAGER SPACEKOMEN* TEXTKOMENDOUBLESLASH* 
 
 PAGER <- '#'  
