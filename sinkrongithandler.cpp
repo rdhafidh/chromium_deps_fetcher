@@ -1,0 +1,68 @@
+#include "sinkrongithandler.h"
+#include <QDebug>
+#include <QDir>
+#include <QFile>
+#include <QProcess>
+#include <QString>
+#include <libs/elzip.hpp>
+
+SinkronGitHandler::SinkronGitHandler() {}
+
+SinkronGitHandler::~SinkronGitHandler() {}
+
+bool SinkronGitHandler::haveGitInPath(const QString &gitexedir) {
+  QFileInfo inf(gitexedir);
+  return inf.isFile();
+}
+
+bool SinkronGitHandler::isThatFolderisGitDir(const QString &fromdir,
+                                             const QString &gitexedir) {
+  QStringList cmd;
+  cmd << "-C";
+  cmd << fromdir;
+  cmd << "show";
+
+  int ret = QProcess::execute(gitexedir, cmd);
+  if (ret != 0) {
+    qDebug() << "failed to spawn git in path";
+    return false;
+  }
+  return true;
+}
+
+bool SinkronGitHandler::processDirs(const QString &basedir,
+                                    const QString &baseName,
+                                    const QString &gitexedir,
+                                    const QString &gitCommitID,
+                                    const QString &outputDir,
+                                    bool isDebugCriticalMode) {
+   
+    QString path = basedir + "/" + baseName; 
+    if (runGitAndEkstractCommit(path, gitexedir, gitCommitID,isDebugCriticalMode)) {
+      auto fp = path + "/" + "out.zip";
+      auto outName=outputDir.toStdString()+"/"+baseName.toStdString ();
+      elz::extractZip(fp.toStdString(), outName,isDebugCriticalMode);
+      QFile::remove(fp);
+      qDebug() << "done procecced " << baseName <<"repo";
+      return true;
+    } else {
+      qDebug() << "failed to process " << baseName << "repo";
+    } 
+    return false;
+}
+
+bool SinkronGitHandler::runGitAndEkstractCommit(const QString &path,
+                                                const QString &gitexedir,
+                                                const QString &commitID,bool isDebugCriticalMode) {
+  QStringList list;
+  QString fpout = path + "/" + "out.zip";
+  list << "-C"
+       <<path<<"archive" << commitID << "--format"
+       << "zip"
+       << "--output" << fpout
+       ; 
+  if(isDebugCriticalMode) qDebug()<<"generated cmd"<<list;
+  int ret = QProcess::execute(gitexedir, list);
+  if(isDebugCriticalMode) qDebug()<<"ret runGitAndEkstractCommit "<<ret<<"using gitexe"<<gitexedir;
+  return ret == 0;
+}
