@@ -19,6 +19,9 @@ int main(int argc, char *argv[])
     QCommandLineOption dbgMode("dbg", QCoreApplication::translate("main", "Show critical debugging msessage"));
     parser.addOption(dbgMode);
     
+    QCommandLineOption aDL("adl", QCoreApplication::translate("main", "Auto download fresh copy repo if missing from sysroot dir"));
+    parser.addOption(aDL);
+    
     QCommandLineOption printFailedRepo("pfr", QCoreApplication::translate("main", "Print all failed repo to be procceed"));
     parser.addOption(printFailedRepo);
     
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
         }
         lsf.doFetch (parser.value (depsfile),excludedrepo,parser.value (localCPDir)
                      ,parser.value (outDir),parser.value (gitExeDir),parser.isSet (dbgMode)
-                     ,parser.isSet (printFailedRepo));
+                     ,parser.isSet (printFailedRepo),parser.isSet (aDL));
     }else{
         parser.showHelp (0);
     }

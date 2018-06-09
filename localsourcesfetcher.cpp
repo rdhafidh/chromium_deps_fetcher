@@ -11,13 +11,11 @@ LocalSourcesFetcher::LocalSourcesFetcher() {}
 
 LocalSourcesFetcher::~LocalSourcesFetcher() {}
 
-void LocalSourcesFetcher::doFetch(const QString &fromdeps,
-                                  const QStringList &excludedrepo,
-                                  const QString &localsourcedir,
-                                  const QString &outdir,
-                                  const QString &gitexedir,
-                                  bool isdebugCriticalMode,
-                                  bool printFailedProceedRepo) {
+void LocalSourcesFetcher::doFetch(
+    const QString &fromdeps, const QStringList &excludedrepo,
+    const QString &localsourcedir, const QString &outdir,
+    const QString &gitexedir, bool isdebugCriticalMode,
+    bool printFailedProceedRepo, bool autoDldIFMissingRepoFromSys) {
   auto repos = findAnyRepos(fromdeps);
   QDir dirs(localsourcedir);
   if (!dirs.makeAbsolute()) {
@@ -65,7 +63,8 @@ void LocalSourcesFetcher::doFetch(const QString &fromdeps,
     }
     return found == true;
   };
-  QSet<QString> pfr;
+  QVector<DEPSRepoFound> pfr;
+  int idx = 0;
   for (const DEPSRepoFound &rep : repos) {
     QString reponame = sanitizeRepoName(rep.reponame);
     bool found = false;
@@ -79,7 +78,7 @@ void LocalSourcesFetcher::doFetch(const QString &fromdeps,
                                                 rep.gitversion, outdir,
                                                 isdebugCriticalMode);
         if (!e) {
-          pfr << reponame;
+          pfr << rep;
           continue;
         }
         found = true;
@@ -89,16 +88,44 @@ void LocalSourcesFetcher::doFetch(const QString &fromdeps,
     if (!found) {
       qDebug() << "[-] failed finding reponame " << reponame << "in "
                << dirs.path();
-
       if (printFailedProceedRepo) {
-        pfr << reponame;
+        pfr << rep;
       }
     }
+    idx++;
   }
   qDebug() << "procecced num repos" << ok << "from total of DEPS file "
            << repos.size();
   if (printFailedProceedRepo) {
-    qDebug() << "List failed repo to proceed:" << pfr;
+    qDebug() << "List failed repo to proceed:"
+             << " count " << pfr.size();
+  }
+  if (autoDldIFMissingRepoFromSys) {
+    for (const auto &ms : pfr) {
+      QString reponame = sanitizeRepoName(ms.reponame);
+
+      qDebug() << "cloning reponame" << reponame << ms.gitversion
+               << ms.linkname;
+      QString outrepo = dirs.path() + "/" + reponame;
+      if (!SinkronGitHandler::cloneMissingRepo(gitpath, ms.linkname, outrepo,
+                                               isdebugCriticalMode)) {
+        qDebug() << "warning auto download repo failed " << ms.linkname
+                 << "to outrepo" << outrepo;
+      } else {
+        qDebug() << "done auto download repo " << ms.linkname << "to repo"
+                 << outrepo;
+
+        // then try to archive and put in outdir
+        bool e = SinkronGitHandler::processDirs(dirs.path(), reponame, gitpath,
+                                                ms.gitversion, outdir,
+                                                isdebugCriticalMode);
+        if (!e) {
+          qDebug() << "warning couldnt archive " << reponame << "giving up..";
+        } else {
+          qDebug() << "done archived repo" << reponame;
+        }
+      }
+    }
   }
 }
 

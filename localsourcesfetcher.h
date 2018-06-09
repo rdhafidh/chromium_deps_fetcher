@@ -17,7 +17,7 @@ public:
      * gitexedir = git app exe dir
      * */
     void  doFetch(const QString &fromdeps, const QStringList &excludedrepo,  const QString &localsourcedir, const QString &outdir,
-                  const QString &gitexedir, bool isdebugCriticalMode, bool printFailedProceedRepo);
+                  const QString &gitexedir, bool isdebugCriticalMode, bool printFailedProceedRepo, bool autoDldIFMissingRepoFromSys);
 private: 
     std::vector<DEPSRepoFound> findAnyRepos(const QString &fromdeps); 
    
