@@ -43,15 +43,17 @@ Options:
   -l                                         From local copy mode, currently
                                              must invoke this, default
   --dbg                                      Show critical debugging msessage
+  --adl                                      Auto download fresh copy repo if
+                                             missing from sysroot dir
   --pfr                                      Print all failed repo to be
                                              procceed
   -e, --exclude <separate_comma_repo_names>  excluded repo (in separate
                                              commas)...
   --fd, --fromdir <from_dir>                 target local copy dir of your
-                                             cloned repo, assuming any DEPS
+                                             cloned repo, assuming any DEPS 
                                              repos is on this directory
   -g, --git <git_exe_dir>                    From git app exe dir
-  -o, --outdir <out_dir>                     output directory folder to unpack
+  -o, --outdir <out_dir>                     output directory folder to unpack 
   --dp <DEPS_FILE>                           Choose DEPS file
 
 ```
