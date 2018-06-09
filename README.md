@@ -18,6 +18,7 @@ Some requirements to build this tool :
 2. [CMake](https://cmake.org/download/) (the lastest version is better, currently 3.11)
 3. [Ninja](https://github.com/ninja-build/ninja) (Optional)
 4. C++17 compiler (MSVC 2017, Clang 6 or 7)
+5. Git (Lastest version is better)
 
 ### Building 
 
