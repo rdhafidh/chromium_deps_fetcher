@@ -27,6 +27,7 @@ Try run :
 
 ```
 cmake -DCMAKE_BUILD_TYPE=Release -DQt5Core_DIR=$QT_ROOT/lib/cmake/Qt5Core -G Ninja /where/src/chromium_deps_fetcher
+ninja
 ```
 
 Where $QT_ROOT is your sysroot of your Qt 5 directory.
