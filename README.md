@@ -61,6 +61,9 @@ Options:
 The -l mode flag is currently default and must be invoked since I want to have another possible usecase as well when working 
 with DEPS file or feel free you can suggest a new feature request.
 
+### Limitions
+Currently this tool is heavily tested against [Google Skia](https://skia.org) project. 
+If you find any bugs, welcome any pull request.
 
 
 ### License 
