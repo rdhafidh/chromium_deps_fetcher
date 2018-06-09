@@ -7,8 +7,9 @@ Why want to re-invent another wheel?
 
 1. The depot tool always downloads blindly the submodule repository, 
 this is very detrimental if you have fast bandwidth but limited internet quota volume.
-With using this tool you can just fetch from sysroot git local cloned repo from certain DEPS file.
+With using this tool you can just fetch from sysroot git local cloned repo of certain DEPS file.
 2. Supporting initial download all repository from certain DEPS file [TODO]. 
+3. Auto download fresh copy of repository from missing local sysroot of cloned git repository [TODO]. 
 
 ### Installation
 
