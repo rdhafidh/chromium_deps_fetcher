@@ -11,6 +11,13 @@ LocalSourcesFetcher::LocalSourcesFetcher() {}
 
 LocalSourcesFetcher::~LocalSourcesFetcher() {}
 
+QDebug operator << (QDebug &out , const QVector<DEPSRepoFound>  &pfr){
+    for(const DEPSRepoFound &mpfr:pfr){
+        out <<mpfr.reponame;
+    }
+    return out;
+}
+
 void LocalSourcesFetcher::doFetch(
     const QString &fromdeps, const QStringList &excludedrepo,
     const QString &localsourcedir, const QString &outdir,
@@ -97,7 +104,7 @@ void LocalSourcesFetcher::doFetch(
   qDebug() << "procecced num repos" << ok << "from total of DEPS file "
            << repos.size();
   if (printFailedProceedRepo) {
-    qDebug() << "List failed repo to proceed:"
+    qDebug() << "List failed repo to proceed:"<<pfr
              << " count " << pfr.size();
   }
   if (autoDldIFMissingRepoFromSys) {
