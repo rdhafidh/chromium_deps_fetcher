@@ -101,10 +101,10 @@ void LocalSourcesFetcher::doFetch(
     }
     idx++;
   }
-  qDebug() << "procecced num repos" << ok << "from total of DEPS file "
+  qDebug() << "had been processed num repos" << ok << "from total of DEPS file "
            << repos.size();
   if (printFailedProceedRepo) {
-    qDebug() << "List failed repo to proceed:"<<pfr
+    qDebug() << "Repo list that failed to be processed:"<<pfr
              << " count " << pfr.size();
   }
   if (autoDldIFMissingRepoFromSys) {

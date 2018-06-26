@@ -43,7 +43,7 @@ bool SinkronGitHandler::processDirs(const QString &basedir,
     auto outName = outputDir.toStdString() + "/" + baseName.toStdString();
     elz::extractZip(fp.toStdString(), outName, isDebugCriticalMode);
     QFile::remove(fp);
-    qDebug() << "done procecced " << baseName << "repo";
+    qDebug() << "done processing " << baseName << "repo";
     return true;
   } else {
     qDebug() << "failed to process " << baseName << "repo";
@@ -76,7 +76,7 @@ bool SinkronGitHandler::runGitAndEkstractCommit(const QString &path,
   if (isDebugCriticalMode) qDebug() << "generated cmd" << list;
   int ret = QProcess::execute(gitexedir, list);
   if (isDebugCriticalMode)
-    qDebug() << "ret runGitAndEkstractCommit " << ret << "using gitexe"
+    qDebug() << "ret runGitAndEkstractCommit " << ret << "using gitexe from"
              << gitexedir;
   return ret == 0;
 }
@@ -92,7 +92,7 @@ bool SinkronGitHandler::cloneFreshRepoFromCommit(const QString &gitexedir,
     qDebug() << "generated cmd cloneFreshRepoFromCommit" << cmd;
   int ret = QProcess::execute(gitexedir, cmd);
   if (isDebugCriticalMode)
-    qDebug() << "ret cloneFreshRepoFromCommit " << ret << "using gitexe"
+    qDebug() << "ret cloneFreshRepoFromCommit " << ret << "using gitexe from"
              << gitexedir;
   return ret == 0;
 }
