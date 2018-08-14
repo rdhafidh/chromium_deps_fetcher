@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>google_deps_grammar.peg</file>
-    </qresource>
-</RCC>

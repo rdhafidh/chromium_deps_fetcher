@@ -1,0 +1,10 @@
+ 
+cmake_policy(SET CMP0015 NEW)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/minizip/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/minizip/src ) 
+
+file(GLOB ELZIPCPP ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp )
+file(GLOB ELZIPDEPSMINIZIP ${CMAKE_CURRENT_SOURCE_DIR}/minizip/src/*.c) 
+
+add_library(elzip ${ELZIPCPP} ${ELZIPDEPSMINIZIP})
