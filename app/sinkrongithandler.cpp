@@ -27,6 +27,22 @@ bool SinkronGitHandler::isThatFolderisGitDir(const QString &fromdir,
   return true;
 }
 
+bool SinkronGitHandler::maybeNeedUpdateRepo(const QString &path,
+                                      const QString &gitexedir)
+{
+	 QStringList cmd;
+  cmd << "-C";
+  cmd << path;
+  cmd << "pull";
+  QString actualgit = gitexedir.isEmpty() ? getDefaultGitInPath() : gitexedir;
+  int ret = QProcess::execute(actualgit, cmd);
+  if (ret != 0) {
+    qDebug() << "failed to spawn git in path";
+    return false;
+  }
+  return true;					  
+}
+
 QString SinkronGitHandler::getDefaultGitInPath() {
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   QString paths = env.value("PATH");
@@ -59,16 +75,40 @@ bool SinkronGitHandler::processDirs(const QString &basedir,
                                     const QString &gitCommitID,
                                     const QString &outputDir,
                                     bool isDebugCriticalMode) {
-  QString path = basedir + "/" + baseName;
-  if (runGitAndEkstractCommit(path, gitexedir, gitCommitID,
+  
+  auto runExtract=[](const QString &basedir,
+                                    const QString &baseName,
+                                    const QString &gitexedir,
+                                    const QString &gitCommitID,
+                                    const QString &outputDir,
+                                    bool isDebugCriticalMode)->bool {
+	 QString path = basedir + "/" + baseName;
+	 if (runGitAndEkstractCommit(path, gitexedir, gitCommitID,
                               isDebugCriticalMode)) {
-    auto fp = path + "/" + "out.zip";
-    auto outName = outputDir.toStdString() + "/" + baseName.toStdString();
-    elz::extractZip(fp.toStdString(), outName, isDebugCriticalMode);
-    QFile::remove(fp);
+			auto fp = path + "/" + "out.zip";
+			auto outName = outputDir.toStdString() + "/" + baseName.toStdString();
+			elz::extractZip(fp.toStdString(), outName, isDebugCriticalMode);
+			QFile::remove(fp);
+			return true;
+     }
+     return false;		
+  };
+  
+  if (runExtract(basedir, baseName,gitexedir, gitCommitID,outputDir,
+                              isDebugCriticalMode)) {
+     
     qDebug() << "done processing " << baseName << "repo";
     return true;
   } else {
+	//we need some update ?
+	if(maybeNeedUpdateRepo(basedir + "/" + baseName,gitexedir)){
+		 if (runExtract(basedir,baseName, gitexedir, gitCommitID,outputDir,
+                              isDebugCriticalMode)) {
+     
+			qDebug() << "done processing " << baseName << "repo";
+			return true;
+		}
+	}
     qDebug() << "failed to process " << baseName << "repo";
   }
   return false;

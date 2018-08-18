@@ -25,6 +25,9 @@ class SinkronGitHandler {
                                        const QString &url,
                                        const QString &outDir,
                                        bool isDebugCriticalMode);
+									   
+  static bool maybeNeedUpdateRepo(const QString &path,
+                                      const QString &gitexedir);
 
   /*
    * TODO
